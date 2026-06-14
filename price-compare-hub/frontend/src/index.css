@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50/50 text-gray-900 font-sans antialiased;
+    background-image: radial-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    perspective: 1200px; /* Enable global 3D perspective */
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/85 backdrop-blur-lg border border-white/60 shadow-xl rounded-2xl;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 
+                0 1px 1px 0 rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+  }
+  
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-lg rounded-xl;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-600 to-purple-500 text-white font-bold py-2.5 px-6 rounded-xl hover:shadow-[0_10px_25px_rgba(59,130,246,0.3)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-inner transition-all duration-300 border-b-4 border-purple-700 active:border-b-0;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-gray-800 font-bold py-2.5 px-6 rounded-xl border border-gray-200 border-b-4 border-b-gray-300 hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-[0_8px_15px_rgba(0,0,0,0.05)] active:translate-y-0 active:border-b active:shadow-inner transition-all duration-300;
+  }
+
+  .card {
+    @apply glass-card overflow-hidden hover:shadow-[0_30px_60px_-15px_rgba(139,92,246,0.12)] transition-all duration-500 hover:-translate-y-2 border border-gray-100/80;
+  }
+  
+  .card-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  
+  .inner-3d {
+    transform: translateZ(35px);
+    transition: transform 0.5s ease-out;
+  }
+
+  .shadow-3d-sm {
+    box-shadow: 2px 2px 0px rgba(139, 92, 246, 0.15), 4px 4px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .shadow-3d-lg {
+    box-shadow: 4px 4px 0px rgba(139, 92, 246, 0.12), 8px 8px 24px rgba(139, 92, 246, 0.06);
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all shadow-inner;
+  }
+
+  /* 3D Perspective Grid Background */
+  .bg-grid-3d {
+    background-image: 
+      linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center;
+    transform: rotateX(60deg) translateZ(-150px) scale(2);
+    transform-origin: top center;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  /* Colorful glow hover shadows for premium design */
+  .colorful-card {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .colorful-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 
+      0 20px 35px -10px rgba(139, 92, 246, 0.2),
+      0 0 25px -5px rgba(236, 72, 153, 0.15);
+    border-color: rgba(236, 72, 153, 0.25);
+  }
+}
+
+/* Hide scrollbar for clean horizontal scrolls */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

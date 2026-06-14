@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PriceCompare India - Real-time Retail Comparison Hub</title>
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              purple: '#8b5cf6',
+              pink: '#ec4899',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Premium glow styles and animations */
+    .glow-purple {
+      box-shadow: 0 0 30px -5px rgba(139, 92, 246, 0.2);
+    }
+    .glow-pink {
+      box-shadow: 0 0 30px -5px rgba(236, 72, 153, 0.2);
+    }
+    .store-card {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .store-card:hover {
+      transform: translateY(-6px);
+    }
+    
+    /* 3D Perspective Grid Background */
+    .bg-grid-mesh {
+      background-image: radial-gradient(rgba(139, 92, 246, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    
+    /* Scrollbar customization */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(139, 92, 246, 0.2);
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(139, 92, 246, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-900 font-sans antialiased bg-grid-mesh min-h-screen flex flex-col transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+
+  <!-- TOP HEADER / NAV BAR -->
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/80 px-4 py-3.5 transition-colors dark:bg-slate-900/80 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="p-2 bg-gradient-to-tr from-brand-purple to-brand-pink text-white rounded-xl shadow-[0_4px_12px_rgba(139,92,246,0.3)]">
+          <i data-lucide="arrow-left-right" class="w-5.5 h-5.5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-black font-outfit tracking-tight bg-gradient-to-r from-brand-purple to-brand-pink bg-clip-text text-transparent">
+            PriceCompare India
+          </h1>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider hidden sm:block">Real-time Retail Store Bridge</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Floating Wishlist Toggle Button -->
+        <button 
+          id="btn-wishlist-toggle"
+          class="relative flex items-center gap-2 py-2 px-4 bg-slate-100/80 hover:bg-slate-200 text-slate-700 rounded-xl transition-all border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700"
+        >
+          <i data-lucide="heart" class="w-4 h-4 text-rose-500 fill-rose-500"></i>
+          <span class="text-xs font-bold hidden sm:inline">Wishlist</span>
+          <span 
+            id="wishlist-counter"
+            class="flex items-center justify-center w-5 h-5 bg-gradient-to-tr from-brand-purple to-brand-pink text-white text-[10px] font-black rounded-full shadow-md"
+          >
+            0
+          </span>
+        </button>
+
+        <!-- Dark Mode Toggle -->
+        <button 
+          id="btn-theme-toggle"
+          class="p-2.5 bg-slate-100/80 hover:bg-slate-200 text-slate-700 rounded-xl transition-all border border-slate-200 dark:bg-slate-800 dark:text-slate-350 dark:border-slate-700 dark:hover:bg-slate-700"
+          title="Toggle light/dark theme"
+        >
+          <i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full flex flex-col gap-6 relative">
+    
+    <!-- SEARCH & FILTER BAR -->
+    <section class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-sm flex flex-col gap-5">
+      <h2 class="text-base font-black font-outfit tracking-tight text-slate-800 dark:text-slate-100 flex items-center gap-2">
+        <i data-lucide="search" class="w-4 h-4 text-brand-purple"></i> Find Best Shopping Deals
+      </h2>
+      
+      <!-- Search Form -->
+      <form id="search-form" class="flex flex-col md:flex-row gap-3">
+        <div class="relative flex-grow">
+          <i data-lucide="package-search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+          <input 
+            type="text" 
+            id="search-input"
+            required
+            placeholder="Type a product name... (e.g. iPhone 15 Pro, Sneakers, Organic Almonds, Lipstick)"
+            class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-2xl border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent transition-all shadow-inner font-semibold text-sm"
+          />
+        </div>
+        
+        <button 
+          type="submit"
+          class="py-3.5 px-7 bg-gradient-to-r from-brand-purple to-brand-pink text-white font-extrabold text-sm rounded-2xl hover:shadow-[0_8px_20px_rgba(139,92,246,0.35)] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+        >
+          <i data-lucide="sparkles" class="w-4.5 h-4.5 animate-pulse"></i>
+          <span>Search & Compare</span>
+        </button>
+      </form>
+
+      <!-- Category Filter Pills -->
+      <div class="flex flex-col gap-3">
+        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Select Category</span>
+        <div class="flex flex-wrap gap-2" id="category-pills">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICE SUMMARY STATS BAR (Hidden initially) -->
+    <section 
+      id="summary-bar-container"
+      class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-sm"
+    >
+      <!-- Lowest Price -->
+      <div class="flex items-center gap-3.5 p-4.5 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 rounded-2xl border border-emerald-100/50 dark:border-emerald-800/40">
+        <div class="p-3 bg-emerald-500 text-white rounded-xl shadow-md">
+          <i data-lucide="trending-down" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-[10px] text-emerald-600 dark:text-emerald-455 font-black uppercase tracking-wider">Lowest price</h3>
+          <p id="stat-lowest-price" class="text-lg font-black text-slate-900 dark:text-slate-100">₹0</p>
+          <p id="stat-lowest-store" class="text-[9px] text-emerald-650 dark:text-emerald-400 font-bold uppercase tracking-wide mt-0.5">via Store</p>
+        </div>
+      </div>
+
+      <!-- Average Price -->
+      <div class="flex items-center gap-3.5 p-4.5 bg-slate-50 dark:bg-slate-950/40 rounded-2xl border border-slate-250/50 dark:border-slate-800/40">
+        <div class="p-3 bg-blue-500 text-white rounded-xl shadow-md">
+          <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-[10px] text-blue-600 dark:text-blue-400 font-black uppercase tracking-wider">Average Price</h3>
+          <p id="stat-average-price" class="text-lg font-black text-slate-900 dark:text-slate-100">₹0</p>
+          <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wide mt-0.5">Across Store list</p>
+        </div>
+      </div>
+
+      <!-- Highest Price -->
+      <div class="flex items-center gap-3.5 p-4.5 bg-rose-50/50 dark:from-rose-950/10 dark:to-slate-950/10 rounded-2xl border border-rose-100/40 dark:border-rose-900/30">
+        <div class="p-3 bg-rose-500 text-white rounded-xl shadow-md">
+          <i data-lucide="trending-up" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-[10px] text-rose-600 dark:text-rose-400 font-black uppercase tracking-wider">Highest Price</h3>
+          <p id="stat-highest-price" class="text-lg font-black text-slate-900 dark:text-slate-100">₹0</p>
+          <p id="stat-highest-store" class="text-[9px] text-rose-500 font-bold uppercase tracking-wide mt-0.5">via Store</p>
+        </div>
+      </div>
+
+      <!-- Max Savings -->
+      <div class="flex items-center gap-3.5 p-4.5 bg-gradient-to-br from-violet-50 to-pink-50 dark:from-violet-950/20 dark:to-pink-950/20 rounded-2xl border border-pink-100/40 dark:border-pink-800/30">
+        <div class="p-3 bg-gradient-to-tr from-brand-purple to-brand-pink text-white rounded-xl shadow-md">
+          <i data-lucide="piggy-bank" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-[10px] text-brand-purple dark:text-purple-400 font-black uppercase tracking-wider">Your Savings</h3>
+          <p id="stat-savings" class="text-lg font-black text-slate-900 dark:text-slate-100">₹0</p>
+          <p id="stat-savings-pct" class="text-[9px] text-brand-pink font-bold uppercase tracking-wide mt-0.5">0% saved vs Avg</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARISON RESULTS AREA -->
+    <section id="comparison-results-section" class="hidden flex flex-col gap-5">
+      <!-- Catalog Controls -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div>
+            <h2 id="results-title" class="text-lg font-black font-outfit tracking-tight text-slate-800 dark:text-slate-100">
+              Compare Pricing Catalog
+            </h2>
+            <p id="results-subtitle" class="text-xs text-slate-400 font-semibold mt-0.5">Search to compare real-time Indian retailer deals</p>
+          </div>
+          <button 
+            id="btn-clear-search"
+            class="py-1.5 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-xl text-xs font-black transition-all flex items-center gap-1 border border-slate-200 dark:border-slate-700"
+            title="Go back to products catalog"
+          >
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Back</span>
+          </button>
+        </div>
+        
+        <!-- Sorting dropdown -->
+        <div class="flex items-center gap-2.5 w-full sm:w-auto" id="sort-container">
+          <span class="text-xs font-bold text-slate-400 uppercase whitespace-nowrap">Sort By</span>
+          <select 
+            id="sort-select"
+            class="w-full sm:w-48 p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-brand-purple text-xs font-black text-slate-700 dark:text-slate-200"
+          >
+            <option value="lowest-price">Lowest Price</option>
+            <option value="fastest-delivery">Fastest Delivery</option>
+            <option value="best-rating">Best Rating</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Store Cards Grid -->
+      <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TRENDING PRODUCTS CATALOG -->
+    <section id="trending-section" class="flex flex-col gap-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-black font-outfit tracking-tight text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-brand-pink"></i> Featured Products Catalog
+          </h2>
+          <p class="text-xs text-slate-400 font-semibold mt-0.5">Select a category or click "Compare" to scan store listings</p>
+        </div>
+      </div>
+      
+      <div id="trending-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- populated dynamically by JS -->
+      </div>
+    </section>
+
+
+    <!-- FLOAT WISHLIST PANEL (DRAWER) -->
+    <section 
+      id="wishlist-drawer"
+      class="fixed top-0 right-0 h-full w-full sm:w-[400px] z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl border-l border-slate-200 dark:border-slate-800 transform translate-x-full transition-transform duration-300 flex flex-col"
+    >
+      <!-- Drawer Header -->
+      <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-violet-50/50 to-pink-50/50 dark:from-slate-900 dark:to-slate-900">
+        <div class="flex items-center gap-2">
+          <i data-lucide="heart" class="w-5 h-5 text-rose-500 fill-rose-500"></i>
+          <span class="font-black font-outfit text-base text-slate-800 dark:text-slate-100">Saved Wishlist</span>
+        </div>
+        <button 
+          id="btn-wishlist-close"
+          class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
+        >
+          <i data-lucide="x" class="w-5.5 h-5.5"></i>
+        </button>
+      </div>
+
+      <!-- Drawer Body (Items list) -->
+      <div id="wishlist-drawer-items" class="flex-grow overflow-y-auto p-5 space-y-4">
+        <!-- Wishlist items populated dynamically -->
+      </div>
+
+      <!-- Drawer Footer -->
+      <div class="p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 text-center space-y-3">
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Review your saved platform rates</p>
+        <button 
+          id="btn-clear-wishlist"
+          class="w-full py-2.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-650 text-slate-600 rounded-xl text-xs font-bold transition-colors border border-slate-250 hover:border-rose-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-rose-950/20 dark:hover:text-rose-400 dark:hover:border-rose-900"
+        >
+          Clear All Wishlist
+        </button>
+      </div>
+    </section>
+
+    <!-- INTRO/PLACEHOLDER BOX -->
+    <section 
+      id="placeholder-view" 
+      class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-12 rounded-3xl border border-slate-200/60 dark:border-slate-800 text-center space-y-5 max-w-2xl mx-auto my-6"
+    >
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-purple to-brand-pink text-white flex items-center justify-center mx-auto shadow-lg">
+        <i data-lucide="package-open" class="w-8 h-8 animate-bounce"></i>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-xl font-black font-outfit text-slate-800 dark:text-slate-100">Ready to Compare Prices?</h3>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-md mx-auto">
+          Type any product name like <strong class="text-brand-purple font-black">"iPhone 15 Pro"</strong>, <strong class="text-brand-purple font-black">"Cotton Shirt"</strong>, or <strong class="text-brand-purple font-black">"Almonds"</strong> above, choose a category, and search to scan real-time pricing indicators.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 px-4 text-center mt-12 transition-colors">
+    <div class="max-w-7xl mx-auto">
+      <p class="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">&copy; 2026 PriceCompare India. All rights reserved.</p>
+    </div>
+  </footer>
+
+
+  <script>
+    // 1. CONFIGURATION: STORES META DATA & LOGOS/COLORS
+    const storesConfig = {
+      amazon: {
+        name: 'Amazon',
+        color: '#FF9900',
+        textColor: '#ffffff',
+        accentBg: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900',
+        logoClass: 'bg-[#FF9900]',
+        categories: ['All', 'Electronics', 'Fashion', 'Grocery', 'Beauty', 'Home'],
+        searchUrl: 'https://www.amazon.in/s?k=QUERY',
+        icon: 'shopping-bag'
+      },
+      flipkart: {
+        name: 'Flipkart',
+        color: '#2874F0',
+        textColor: '#ffffff',
+        accentBg: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900',
+        logoClass: 'bg-[#2874F0]',
+        categories: ['All', 'Electronics', 'Fashion', 'Beauty', 'Home'],
+        searchUrl: 'https://www.flipkart.com/search?q=QUERY',
+        icon: 'shopping-cart'
+      },
+      meesho: {
+        name: 'Meesho',
+        color: '#F43F5E',
+        textColor: '#ffffff',
+        accentBg: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900',
+        logoClass: 'bg-[#F43F5E]',
+        categories: ['All', 'Fashion', 'Home'],
+        searchUrl: 'https://www.meesho.com/search?q=QUERY',
+        icon: 'tag'
+      },
+      myntra: {
+        name: 'Myntra',
+        color: '#EC4899',
+        textColor: '#ffffff',
+        accentBg: 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-950/20 dark:text-pink-400 dark:border-pink-900',
+        logoClass: 'bg-[#EC4899]',
+        categories: ['All', 'Fashion', 'Beauty'],
+        searchUrl: 'https://www.myntra.com/QUERY',
+        icon: 'shirt'
+      },
+      ajio: {
+        name: 'AJIO',
+        color: '#2E2E2E',
+        textColor: '#ffffff',
+        accentBg: 'bg-slate-100 text-slate-800 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+        logoClass: 'bg-[#2E2E2E]',
+        categories: ['All', 'Fashion'],
+        searchUrl: 'https://www.ajio.com/search/?text=QUERY',
+        icon: 'hanger'
+      },
+      snapdeal: {
+        name: 'Snapdeal',
+        color: '#E40046',
+        textColor: '#ffffff',
+        accentBg: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900',
+        logoClass: 'bg-[#E40046]',
+        categories: ['All', 'Electronics', 'Fashion', 'Home'],
+        searchUrl: 'https://www.snapdeal.com/search?keyword=QUERY',
+        icon: 'gift'
+      },
+      jiomart: {
+        name: 'JioMart',
+        color: '#004F9A',
+        textColor: '#ffffff',
+        accentBg: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/20 dark:text-indigo-400 dark:border-indigo-900',
+        logoClass: 'bg-[#004F9A]',
+        categories: ['All', 'Grocery', 'Home'],
+        searchUrl: 'https://www.jiomart.com/search#q=QUERY',
+        icon: 'store'
+      },
+      bigbasket: {
+        name: 'BigBasket',
+        color: '#84C225',
+        textColor: '#ffffff',
+        accentBg: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900',
+        logoClass: 'bg-[#84C225]',
+        categories: ['All', 'Grocery'],
+        searchUrl: 'https://www.bigbasket.com/ps/?q=QUERY',
+        icon: 'apple'
+      },
+      nykaa: {
+        name: 'Nykaa',
+        color: '#FC2779',
+        textColor: '#ffffff',
+        accentBg: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-950/20 dark:text-fuchsia-400 dark:border-fuchsia-900',
+        logoClass: 'bg-[#FC2779]',
+        categories: ['All', 'Beauty'],
+        searchUrl: 'https://www.nykaa.com/search/result/?q=QUERY',
+        icon: 'sparkles'
+      },
+      tatacliq: {
+        name: 'Tata CLiQ',
+        color: '#DA251D',
+        textColor: '#ffffff',
+        accentBg: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900',
+        logoClass: 'bg-[#DA251D]',
+        categories: ['All', 'Electronics', 'Fashion'],
+        searchUrl: 'https://www.tatacliq.com/search/?searchCategory=all&text=QUERY',
+        icon: 'gem'
+      },
+      croma: {
+        name: 'Croma',
+        color: '#00B9B0',
+        textColor: '#ffffff',
+        accentBg: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/20 dark:text-teal-400 dark:border-teal-900',
+        logoClass: 'bg-[#00B9B0]',
+        categories: ['All', 'Electronics'],
+        searchUrl: 'https://www.croma.com/searchB?q=QUERY',
+        icon: 'tv'
+      },
+      vijaysales: {
+        name: 'Vijay Sales',
+        color: '#D81A21',
+        textColor: '#ffffff',
+        accentBg: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-450 dark:border-rose-900',
+        logoClass: 'bg-[#D81A21]',
+        categories: ['All', 'Electronics'],
+        searchUrl: 'https://www.vijaysales.com/search/QUERY',
+        icon: 'monitor'
+      }
+    };
+
+    // Available categories
+    const categories = ['All', 'Electronics', 'Fashion', 'Grocery', 'Beauty', 'Home'];
+
+    // State management variables
+    let currentCategory = 'All';
+    let currentQuery = '';
+    let currentDeals = [];
+    let wishlist = [];
+
+    // Load initial wishlist from localStorage if present
+    if (localStorage.getItem('india_pch_wishlist')) {
+      try {
+        wishlist = JSON.parse(localStorage.getItem('india_pch_wishlist'));
+      } catch (e) {
+        wishlist = [];
+      }
+    }
+
+    // 2. STYLING/THEMING ENGINE
+    const themeBtn = document.getElementById('btn-theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    const updateThemeUI = () => {
+      if (document.documentElement.classList.contains('dark')) {
+        themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        themeIcon.setAttribute('data-lucide', 'moon');
+      }
+      lucide.createIcons();
+    };
+
+    // Check system preferences on load
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    updateThemeUI();
+
+    themeBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+      updateThemeUI();
+    });
+
+    // 3. UI GENERATION & CONTROLS
+    // Category pills setup
+    const categoryContainer = document.getElementById('category-pills');
+    categories.forEach(cat => {
+      const pill = document.createElement('button');
+      pill.textContent = cat;
+      pill.className = `cat-pill px-4.5 py-2.5 font-black text-xs rounded-xl border transition-all ${
+        cat === currentCategory 
+          ? 'bg-gradient-to-r from-brand-purple to-brand-pink text-white border-transparent shadow-[0_3px_10px_rgba(139,92,246,0.25)]' 
+          : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300'
+      }`;
+      pill.addEventListener('click', () => {
+        currentCategory = cat;
+        // Update selection UI
+        document.querySelectorAll('.cat-pill').forEach(b => {
+          b.className = 'cat-pill px-4.5 py-2.5 font-black text-xs rounded-xl border transition-all bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300';
+        });
+        pill.className = 'cat-pill px-4.5 py-2.5 font-black text-xs rounded-xl border transition-all bg-gradient-to-r from-brand-purple to-brand-pink text-white border-transparent shadow-[0_3px_10px_rgba(139,92,246,0.25)]';
+        
+        // Filter or update list if search has run
+        if (currentQuery) {
+          generateDeals();
+        } else {
+          displayTrendingProducts();
+        }
+      });
+      categoryContainer.appendChild(pill);
+    });
+
+    // Default Products catalog
+    const defaultProducts = [
+      {
+        name: 'Apple iPhone 15 Pro (128 GB) - Natural Titanium',
+        brand: 'Apple',
+        category: 'Electronics',
+        price: 129900,
+        image: 'https://rukminim2.flixcart.com/image/312/312/xif0q/mobile/z/4/r/-original-imagtc4g22rcatjg.jpeg?q=70',
+        searchQuery: 'iPhone 15 Pro'
+      },
+      {
+        name: 'Samsung Galaxy S24 Ultra 5G (256 GB) - Titanium Gray',
+        brand: 'Samsung',
+        category: 'Electronics',
+        price: 119999,
+        image: 'https://rukminim2.flixcart.com/image/312/312/xif0q/mobile/j/m/z/-original-imahgfmxumntk7sy.jpeg?q=70',
+        searchQuery: 'Samsung S24 Ultra'
+      },
+      {
+        name: 'Sony WH-1000XM5 Wireless Noise Cancelling Headphones',
+        brand: 'Sony',
+        category: 'Electronics',
+        price: 26990,
+        image: 'https://m.media-amazon.com/images/I/51aXvjzcukL.jpg',
+        searchQuery: 'Sony WH-1000XM5'
+      },
+      {
+        name: 'Nike Revolution 6 Running Shoes for Men',
+        brand: 'Nike',
+        category: 'Fashion',
+        price: 2195,
+        image: 'https://m.media-amazon.com/images/I/61NlB0K+ZOL.jpg',
+        searchQuery: 'Nike Revolution 6'
+      },
+      {
+        name: "Levi's Men's 511 Slim Fit Jeans",
+        brand: "Levi's",
+        category: 'Fashion',
+        price: 1899,
+        image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&q=80&w=300',
+        searchQuery: 'Levis 511 Jeans'
+      },
+      {
+        name: "Zara Men's Solid Cotton Shirt",
+        brand: 'Zara',
+        category: 'Fashion',
+        price: 2490,
+        image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&q=80&w=300',
+        searchQuery: 'Zara Cotton Shirt'
+      },
+      {
+        name: 'Organic California Raw Almonds (500g)',
+        brand: 'Happilo',
+        category: 'Grocery',
+        price: 425,
+        image: 'https://images.unsplash.com/photo-1508061253366-f7da158b6d9b?auto=format&fit=crop&q=80&w=300',
+        searchQuery: 'Organic Almonds'
+      },
+      {
+        name: 'Tata Tea Premium (1kg Pack)',
+        brand: 'Tata Tea',
+        category: 'Grocery',
+        price: 380,
+        image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=300',
+        searchQuery: 'Tata Tea Premium'
+      },
+      {
+        name: "L'Oreal Paris Extraordinary Oil Hair Serum (100ml)",
+        brand: "L'Oreal",
+        category: 'Beauty',
+        price: 499,
+        image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=300',
+        searchQuery: 'LOreal Hair Serum'
+      },
+      {
+        name: 'Maybelline New York SuperStay Matte Ink Lipstick',
+        brand: 'Maybelline',
+        category: 'Beauty',
+        price: 299,
+        image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80&w=300',
+        searchQuery: 'Maybelline Lipstick'
+      },
+      {
+        name: 'Sheesham Solid Wood Coffee Table',
+        brand: 'Urban Ladder',
+        category: 'Home',
+        price: 6499,
+        image: 'https://images.unsplash.com/photo-1544457070-4cd96414002e?auto=format&fit=crop&q=80&w=300',
+        searchQuery: 'Wood Coffee Table'
+      },
+      {
+        name: 'Premium Polyester Blackout Curtains (Set of 2)',
+        brand: 'Decofy',
+        category: 'Home',
+        price: 1299,
+        image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=300',
+        searchQuery: 'Blackout Curtains'
+      }
+    ];
+
+    const displayTrendingProducts = () => {
+      const trendingGrid = document.getElementById('trending-grid');
+      trendingGrid.innerHTML = '';
+      
+      const filtered = defaultProducts.filter(p => {
+        return currentCategory === 'All' || p.category === currentCategory;
+      });
+
+      if (filtered.length === 0) {
+        trendingGrid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400 font-bold dark:text-slate-500">
+            <i data-lucide="info" class="w-10 h-10 mx-auto mb-3 text-slate-350"></i>
+            No featured products found under category: ${currentCategory}
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'flex flex-col bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden p-5 store-card relative';
+        
+        let categoryColor = 'bg-blue-500 text-white';
+        if (p.category === 'Fashion') categoryColor = 'bg-pink-500 text-white';
+        else if (p.category === 'Grocery') categoryColor = 'bg-emerald-500 text-white';
+        else if (p.category === 'Beauty') categoryColor = 'bg-purple-500 text-white';
+        else if (p.category === 'Home') categoryColor = 'bg-amber-500 text-white';
+
+        card.innerHTML = `
+          <!-- Category Tag -->
+          <span class="absolute top-4 left-4 ${categoryColor} text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm z-10">
+            ${p.category}
+          </span>
+          
+          <!-- Image Wrapper -->
+          <div class="aspect-square w-full rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-950/60 mb-4 flex items-center justify-center relative p-3 border border-slate-100 dark:border-slate-850">
+            <img src="${p.image}" alt="${p.name}" class="max-h-full max-w-full object-contain transition-all hover:scale-105 duration-300" />
+          </div>
+
+          <!-- Brand & Title -->
+          <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">${p.brand}</span>
+          <h3 class="text-sm font-black font-outfit text-slate-800 dark:text-slate-100 line-clamp-2 mt-0.5 mb-4 min-h-[40px]">
+            ${p.name}
+          </h3>
+
+          <!-- Footer details -->
+          <div class="mt-auto pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+            <div>
+              <span class="text-[9px] text-slate-400 font-bold uppercase block">Est. Price</span>
+              <span class="text-sm font-black text-slate-800 dark:text-slate-200">₹${p.price.toLocaleString()}</span>
+            </div>
+            <button class="btn-compare-now py-2 px-3.5 bg-gradient-to-r from-brand-purple to-brand-pink hover:shadow-[0_4px_12px_rgba(139,92,246,0.25)] text-white text-xs font-black rounded-xl transition-all flex items-center gap-1 active:scale-95">
+              <span>Compare</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+        `;
+
+        // Click handler to select and compare this product
+        const triggerSearch = () => {
+          searchInput.value = p.searchQuery;
+          currentQuery = p.searchQuery;
+          renderView();
+          resultsTitle.textContent = `Search Comparison: "${p.searchQuery}"`;
+          resultsSubtitle.textContent = `Real-time pricing across active stores under category: ${currentCategory}`;
+          generateDeals();
+        };
+
+        card.querySelector('.btn-compare-now').addEventListener('click', triggerSearch);
+        card.addEventListener('click', (e) => {
+          if (!e.target.closest('.btn-compare-now')) {
+            triggerSearch();
+          }
+        });
+
+        trendingGrid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    };
+
+    const renderView = () => {
+      const trendingSection = document.getElementById('trending-section');
+      const placeholderView = document.getElementById('placeholder-view');
+      const comparisonResultsSection = document.getElementById('comparison-results-section');
+      const summaryBarContainer = document.getElementById('summary-bar-container');
+
+      if (currentQuery) {
+        placeholderView.classList.add('hidden');
+        trendingSection.classList.add('hidden');
+        comparisonResultsSection.classList.remove('hidden');
+        summaryBarContainer.classList.remove('hidden');
+      } else {
+        placeholderView.classList.remove('hidden');
+        trendingSection.classList.remove('hidden');
+        comparisonResultsSection.classList.add('hidden');
+        summaryBarContainer.classList.add('hidden');
+        displayTrendingProducts();
+      }
+    };
+
+
+    // 4. SIMULATION DEALS GENERATOR
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const placeholderView = document.getElementById('placeholder-view');
+    const summaryBar = document.getElementById('summary-bar-container');
+    const catalogGrid = document.getElementById('catalog-grid');
+    const sortSelect = document.getElementById('sort-select');
+    const resultsTitle = document.getElementById('results-title');
+    const resultsSubtitle = document.getElementById('results-subtitle');
+
+    const deliveryEstimates = [
+      { text: 'Free delivery', days: 3 },
+      { text: 'Free Express Delivery (2 Days)', days: 2 },
+      { text: '₹40 Delivery Fee', days: 4 },
+      { text: '₹50 Delivery Fee', days: 5 },
+      { text: 'Free delivery, Tomorrow', days: 1 }
+    ];
+
+    const getQueryUrls = (storeKey, query) => {
+      const store = storesConfig[storeKey];
+      const encoded = encodeURIComponent(query);
+      
+      let finalUrl = store.searchUrl.replace('QUERY', encoded);
+      return finalUrl;
+    };
+
+    const generateDeals = () => {
+      if (!currentQuery) return;
+      
+      // Select base price depending on category or keyword lookup
+      let minBase = 499;
+      let maxBase = 49999;
+      
+      const queryLower = currentQuery.toLowerCase();
+      let detectedCategory = currentCategory;
+
+      if (detectedCategory === 'All') {
+        // Simple classifier based on query
+        if (/(phone|iphone|samsung|galaxy|laptop|macbook|ipad|pixel|oneplus|tv|croma|headphones|console|playstation|dji|camera|drone|speaker)/i.test(queryLower)) {
+          detectedCategory = 'Electronics';
+        } else if (/(shoes|shirt|jeans|tshirt|wear|dress|adidas|nike|saree|kurta|jacket|ethnic)/i.test(queryLower)) {
+          detectedCategory = 'Fashion';
+        } else if (/(milk|onion|oil|rice|dal|paneer|almond|nut|fruit|veg|grocery|sugar|tea|coffee)/i.test(queryLower)) {
+          detectedCategory = 'Grocery';
+        } else if (/(cream|lipstick|serum|cleanser|shampoo|perfume|beauty|serum|cosmetic|face)/i.test(queryLower)) {
+          detectedCategory = 'Beauty';
+        } else if (/(sofa|bed|curtain|lamp|cushion|table|chair|pillow|kitchen|decor|pot)/i.test(queryLower)) {
+          detectedCategory = 'Home';
+        }
+      }
+
+      switch (detectedCategory) {
+        case 'Electronics':
+          minBase = 9999;
+          maxBase = 149999;
+          break;
+        case 'Fashion':
+          minBase = 499;
+          maxBase = 49999;
+          break;
+        case 'Grocery':
+          minBase = 49;
+          maxBase = 999;
+          break;
+        case 'Beauty':
+          minBase = 199;
+          maxBase = 2999;
+          break;
+        case 'Home':
+          minBase = 899;
+          maxBase = 19999;
+          break;
+        default:
+          minBase = 499;
+          maxBase = 49999;
+          break;
+      }
+
+      // Generate a stable base price from the query string hash so searching same thing gets similar price
+      let hash = 0;
+      for (let i = 0; i < currentQuery.length; i++) {
+        hash = currentQuery.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const absHash = Math.abs(hash);
+      const basePrice = minBase + (absHash % (maxBase - minBase));
+
+      // Filter stores list by category
+      const activeStores = Object.keys(storesConfig).filter(storeKey => {
+        const store = storesConfig[storeKey];
+        return currentCategory === 'All' || store.categories.includes(currentCategory);
+      });
+
+      // Generate simulated deal for each active store
+      currentDeals = activeStores.map(storeKey => {
+        const store = storesConfig[storeKey];
+        
+        // Add random variation to prices (-10% to +10% based on store key hash)
+        let storeHash = 0;
+        for (let i = 0; i < storeKey.length; i++) {
+          storeHash = storeKey.charCodeAt(i) + ((storeHash << 5) - storeHash);
+        }
+        const storeAbsHash = Math.abs(storeHash);
+        const variation = -0.1 + ((storeAbsHash % 20) / 100); // -10% to +10%
+        
+        const price = Math.round(basePrice * (1 + variation));
+        
+        // Pick stable random delivery option
+        const deliveryIdx = storeAbsHash % deliveryEstimates.length;
+        const delivery = deliveryEstimates[deliveryIdx];
+
+        // Pick rating
+        const rating = (3.8 + ((storeAbsHash % 12) / 10)).toFixed(1);
+        const reviewsCount = 100 + (storeAbsHash % 9800);
+
+        return {
+          storeKey,
+          name: store.name,
+          color: store.color,
+          textColor: store.textColor,
+          accentBg: store.accentBg,
+          price,
+          deliveryText: delivery.text,
+          deliveryDays: delivery.days,
+          rating,
+          reviewsCount,
+          url: getQueryUrls(storeKey, currentQuery)
+        };
+      });
+
+      // Find lowest price
+      if (currentDeals.length > 0) {
+        let sortedByPrice = [...currentDeals].sort((a, b) => a.price - b.price);
+        const lowestPrice = sortedByPrice[0].price;
+        
+        currentDeals = currentDeals.map(d => {
+          return {
+            ...d,
+            isBestDeal: d.price === lowestPrice
+          };
+        });
+      }
+
+      displayDeals();
+      displaySummary();
+    };
+
+    // 5. RENDER CARDS TO CATALOG
+    const displayDeals = () => {
+      catalogGrid.innerHTML = '';
+      
+      if (currentDeals.length === 0) {
+        catalogGrid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400 font-bold dark:text-slate-500">
+            <i data-lucide="info" class="w-10 h-10 mx-auto mb-3 text-slate-350"></i>
+            No stores are available for this category filter.
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // Sort according to selection
+      const sortBy = sortSelect.value;
+      let sortedDeals = [...currentDeals];
+      if (sortBy === 'lowest-price') {
+        sortedDeals.sort((a, b) => a.price - b.price);
+      } else if (sortBy === 'fastest-delivery') {
+        sortedDeals.sort((a, b) => a.deliveryDays - b.deliveryDays);
+      } else if (sortBy === 'best-rating') {
+        sortedDeals.sort((a, b) => b.rating - a.rating);
+      }
+
+      sortedDeals.forEach(deal => {
+        const isSaved = wishlist.some(item => item.storeKey === deal.storeKey && item.productName === currentQuery);
+        
+        const card = document.createElement('div');
+        card.className = `flex flex-col bg-white dark:bg-slate-900 border ${
+          deal.isBestDeal 
+            ? 'border-brand-pink shadow-[0_4px_20px_rgba(236,72,153,0.15)] ring-1 ring-brand-pink/30' 
+            : 'border-slate-200 dark:border-slate-800 shadow-sm'
+        } rounded-3xl overflow-hidden p-5 store-card relative`;
+        
+        card.innerHTML = `
+          <!-- Best Deal Badge -->
+          ${deal.isBestDeal ? `
+            <span class="absolute top-4 left-4 bg-gradient-to-r from-brand-purple to-brand-pink text-white text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm animate-pulse">
+              🔥 Best Deal
+            </span>
+          ` : ''}
+
+          <!-- Wishlist heart button -->
+          <button 
+            class="btn-wishlist absolute top-4 right-4 p-2 bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-full transition-all border border-slate-200/50 dark:bg-slate-800 dark:border-slate-700/50 dark:hover:bg-rose-950/20"
+            data-store="${deal.storeKey}"
+            title="Save to Wishlist"
+          >
+            <i data-lucide="heart" class="w-4 h-4 ${isSaved ? 'fill-rose-500 text-rose-500' : ''}"></i>
+          </button>
+
+          <!-- Store Logo Header -->
+          <div class="flex items-center gap-3 mt-4 mb-4">
+            <div 
+              class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-extrabold text-sm shadow-md"
+              style="background-color: ${deal.color};"
+            >
+              ${deal.name[0]}
+            </div>
+            <div>
+              <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Platform Store</span>
+              <h3 class="text-base font-black font-outfit text-slate-800 dark:text-slate-100" style="color: ${deal.color};">
+                ${deal.name}
+              </h3>
+            </div>
+          </div>
+
+          <!-- Price & Discount -->
+          <div class="mb-4">
+            <span class="text-xs text-slate-400 font-bold">Estimated Rate</span>
+            <div class="flex items-baseline gap-2 mt-0.5">
+              <span class="text-2xl font-black text-slate-900 dark:text-slate-50">₹${deal.price.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <!-- Details (Delivery & Rating) -->
+          <div class="space-y-2.5 border-t border-slate-100 dark:border-slate-800/80 pt-4 mb-6 text-xs text-slate-500 dark:text-slate-400">
+            <div class="flex items-center justify-between">
+              <span class="font-bold flex items-center gap-1.5"><i data-lucide="truck" class="w-3.5 h-3.5 text-slate-400"></i> Delivery</span>
+              <span class="font-black text-slate-750 dark:text-slate-300">${deal.deliveryText}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="font-bold flex items-center gap-1.5"><i data-lucide="star" class="w-3.5 h-3.5 text-amber-450 fill-amber-450"></i> Ratings</span>
+              <span class="font-black text-slate-750 dark:text-slate-300">
+                ${deal.rating} ★ <span class="text-[10px] text-slate-400 font-bold">(${deal.reviewsCount.toLocaleString()})</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-auto grid grid-cols-2 gap-2">
+            <a 
+              href="${deal.url}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-750 text-center font-bold text-xs rounded-xl hover:bg-slate-100 dark:hover:bg-slate-750 transition-colors flex items-center justify-center gap-1"
+            >
+              <span>View Deal</span>
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+            <a 
+              href="${deal.url}"
+              class="py-2.5 bg-gradient-to-r from-brand-purple to-brand-pink text-white text-center font-extrabold text-xs rounded-xl hover:shadow-[0_4px_12px_rgba(139,92,246,0.25)] transition-all flex items-center justify-center gap-1"
+            >
+              <span>Order Now</span>
+              <i data-lucide="shopping-cart" class="w-3 h-3"></i>
+            </a>
+          </div>
+        `;
+
+        // Attach event listener for wishlist button click
+        const wlBtn = card.querySelector('.btn-wishlist');
+        wlBtn.addEventListener('click', () => toggleWishlistItem(deal));
+
+        catalogGrid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    };
+
+    // 6. CALCULATE & DISPLAY SUMMARY STATS
+    const displaySummary = () => {
+      if (currentDeals.length === 0) {
+        summaryBar.classList.add('hidden');
+        return;
+      }
+      
+      summaryBar.classList.remove('hidden');
+
+      const prices = currentDeals.map(d => d.price);
+      const lowest = Math.min(...prices);
+      const highest = Math.max(...prices);
+      const average = Math.round(prices.reduce((sum, p) => sum + p, 0) / prices.length);
+      
+      const lowestDeal = currentDeals.find(d => d.price === lowest);
+      const highestDeal = currentDeals.find(d => d.price === highest);
+
+      const savings = average - lowest;
+      const savingsPct = average > 0 ? Math.round((savings / average) * 100) : 0;
+
+      // Update statistics tags
+      document.getElementById('stat-lowest-price').textContent = `₹${lowest.toLocaleString()}`;
+      document.getElementById('stat-lowest-store').textContent = `via ${lowestDeal ? lowestDeal.name : 'Store'}`;
+
+      document.getElementById('stat-average-price').textContent = `₹${average.toLocaleString()}`;
+
+      document.getElementById('stat-highest-price').textContent = `₹${highest.toLocaleString()}`;
+      document.getElementById('stat-highest-store').textContent = `via ${highestDeal ? highestDeal.name : 'Store'}`;
+
+      document.getElementById('stat-savings').textContent = `₹${savings.toLocaleString()}`;
+      document.getElementById('stat-savings-pct').textContent = `₹${savings.toLocaleString()} (${savingsPct}%) saved vs Avg`;
+    };
+
+    // 7. SEARCH SUBMIT TRIGGER
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const query = searchInput.value.trim();
+      if (!query) return;
+
+      currentQuery = query;
+      renderView();
+      
+      resultsTitle.textContent = `Search Comparison: "${query}"`;
+      resultsSubtitle.textContent = `Real-time pricing across active stores under category: ${currentCategory}`;
+
+      generateDeals();
+    });
+
+    // Back / Clear search trigger
+    const clearSearchBtn = document.getElementById('btn-clear-search');
+    clearSearchBtn.addEventListener('click', () => {
+      currentQuery = '';
+      searchInput.value = '';
+      renderView();
+    });
+
+
+    // Handle sort selection change
+    sortSelect.addEventListener('change', () => {
+      if (currentDeals.length > 0) {
+        displayDeals();
+      }
+    });
+
+    // 8. WISHLIST ENGINE (DRAWER PANEL)
+    const wishlistDrawer = document.getElementById('wishlist-drawer');
+    const wishlistItemsContainer = document.getElementById('wishlist-drawer-items');
+    const wishlistCounter = document.getElementById('wishlist-counter');
+    const wishlistToggleBtn = document.getElementById('btn-wishlist-toggle');
+    const wishlistCloseBtn = document.getElementById('btn-wishlist-close');
+    const wishlistClearBtn = document.getElementById('btn-clear-wishlist');
+
+    const updateWishlistUI = () => {
+      wishlistCounter.textContent = wishlist.length;
+      wishlistItemsContainer.innerHTML = '';
+      
+      if (wishlist.length === 0) {
+        wishlistItemsContainer.innerHTML = `
+          <div class="py-12 text-center text-slate-400 font-bold dark:text-slate-500">
+            <i data-lucide="heart-off" class="w-10 h-10 mx-auto mb-3 text-slate-300"></i>
+            Wishlist is empty.<br>Save deals from comparison cards.
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      wishlist.forEach((item, idx) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'p-4 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-between gap-3 shadow-inner';
+        
+        itemEl.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div 
+              class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold text-xs shadow-md flex-shrink-0"
+              style="background-color: ${item.color};"
+            >
+              ${item.storeName[0]}
+            </div>
+            <div>
+              <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 line-clamp-1">${item.productName}</h4>
+              <p class="text-[10px] font-bold mt-0.5" style="color: ${item.color};">
+                ${item.storeName}
+              </p>
+              <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-500">
+                <span class="font-extrabold text-slate-800 dark:text-slate-350">₹${item.price.toLocaleString()}</span>
+                <span>•</span>
+                <span>${item.delivery}</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <a 
+              href="${item.url}"
+              class="p-2 bg-gradient-to-tr from-brand-purple to-brand-pink text-white rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all"
+              title="Order Now"
+            >
+              <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+            </a>
+            <button 
+              class="btn-delete-wishlist p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700/50 dark:hover:bg-rose-950/20"
+              data-idx="${idx}"
+              title="Remove Item"
+            >
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+
+        // Delete button listener
+        itemEl.querySelector('.btn-delete-wishlist').addEventListener('click', () => {
+          removeWishlistItem(idx);
+        });
+
+        wishlistItemsContainer.appendChild(itemEl);
+      });
+
+      lucide.createIcons();
+    };
+
+    const toggleWishlistItem = (deal) => {
+      const existingIdx = wishlist.findIndex(item => item.storeKey === deal.storeKey && item.productName === currentQuery);
+      
+      if (existingIdx > -1) {
+        // Remove it
+        wishlist.splice(existingIdx, 1);
+      } else {
+        // Add it
+        wishlist.push({
+          productName: currentQuery,
+          storeKey: deal.storeKey,
+          storeName: deal.name,
+          color: deal.color,
+          price: deal.price,
+          delivery: deal.deliveryText,
+          url: deal.url
+        });
+      }
+
+      localStorage.setItem('india_pch_wishlist', JSON.stringify(wishlist));
+      updateWishlistUI();
+      displayDeals(); // Refresh search cards state (heart fill color)
+    };
+
+    const removeWishlistItem = (idx) => {
+      wishlist.splice(idx, 1);
+      localStorage.setItem('india_pch_wishlist', JSON.stringify(wishlist));
+      updateWishlistUI();
+      displayDeals(); // Refresh cards to toggle fill color off
+    };
+
+    wishlistToggleBtn.addEventListener('click', () => {
+      wishlistDrawer.classList.remove('translate-x-full');
+    });
+
+    wishlistCloseBtn.addEventListener('click', () => {
+      wishlistDrawer.classList.add('translate-x-full');
+    });
+
+    wishlistClearBtn.addEventListener('click', () => {
+      wishlist = [];
+      localStorage.removeItem('india_pch_wishlist');
+      updateWishlistUI();
+      displayDeals();
+    });
+
+    // Close wishlist drawer when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!wishlistDrawer.contains(e.target) && !wishlistToggleBtn.contains(e.target)) {
+        wishlistDrawer.classList.add('translate-x-full');
+      }
+    });
+
+    // Async function to load products from database API if running
+    const loadProductsFromApi = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/products?limit=100');
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.products && data.products.length > 0) {
+            // Map the API products to the defaultProducts format
+            const mappedProducts = data.products.map(p => {
+              // Extract a clean searchQuery from the name
+              let query = p.name;
+              if (query.includes('(')) {
+                query = query.split('(')[0].trim();
+              }
+              if (query.includes('-')) {
+                query = query.split('-')[0].trim();
+              }
+              
+              // Normalize category mapping
+              let cat = p.category;
+              if (cat === 'Home Decor' || cat === 'Home Appliances') {
+                cat = 'Home';
+              }
+              
+              return {
+                name: p.name,
+                brand: p.brand || 'Brand',
+                category: cat || 'All',
+                price: p.lowestPrice || p.basePrice || 0,
+                image: p.image || 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&q=80&w=300',
+                searchQuery: query
+              };
+            });
+            
+            // Overwrite defaultProducts with the complete list from backend
+            defaultProducts.length = 0;
+            defaultProducts.push(...mappedProducts);
+            console.log(`Successfully loaded ${defaultProducts.length} products dynamically from MongoDB API.`);
+          }
+        }
+      } catch (err) {
+        console.warn('Backend API offline or unreachable. Falling back to built-in simulation products.', err.message);
+      }
+      
+      // Refresh the view to show the loaded products
+      displayTrendingProducts();
+    };
+
+    loadProductsFromApi();
+    renderView();
+    updateWishlistUI();
+    lucide.createIcons();
+
+
+  </script>
+</body>
+</html>

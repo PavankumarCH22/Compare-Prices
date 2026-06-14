@@ -1,0 +1,9 @@
+name,brand,category,subCategory,image,description,platformName,originalPrice,discount,deliveryCharge,finalPrice,rating,reviewsCount,stockStatus,productUrl
+Apple iPhone 15 Pro,Apple,Electronics,Smartphone,https://m.media-amazon.com/images/I/81sigp+ePRL.jpg,A17 Pro chip and Titanium build,Amazon,134900,5000,0,129900,4.6,12050,In Stock,https://amazon.in
+Apple iPhone 15 Pro,Apple,Electronics,Smartphone,https://m.media-amazon.com/images/I/81sigp+ePRL.jpg,A17 Pro chip and Titanium build,Flipkart,134900,6000,0,128900,4.7,8000,In Stock,https://flipkart.com
+Apple iPhone 15 Pro,Apple,Electronics,Smartphone,https://m.media-amazon.com/images/I/81sigp+ePRL.jpg,A17 Pro chip and Titanium build,Croma,134900,0,100,135000,4.5,4500,In Stock,https://croma.com
+Sony WH-1000XM5,Sony,Electronics,Headphones,https://m.media-amazon.com/images/I/51aXvjzcukL.jpg,Industry leading noise cancellation,Amazon,29990,3000,0,26990,4.5,6000,In Stock,https://amazon.in
+Sony WH-1000XM5,Sony,Electronics,Headphones,https://m.media-amazon.com/images/I/51aXvjzcukL.jpg,Industry leading noise cancellation,Reliance Digital,29990,2500,0,27490,4.6,3200,In Stock,https://reliancedigital.in
+Nike Revolution 6,Nike,Fashion,Shoes,https://m.media-amazon.com/images/I/61NlB0K+ZOL.jpg,Comfortable running shoes,Myntra,3695,1000,0,2695,4.2,15000,In Stock,https://myntra.com
+Nike Revolution 6,Nike,Fashion,Shoes,https://m.media-amazon.com/images/I/61NlB0K+ZOL.jpg,Comfortable running shoes,Ajio,3695,1200,50,2545,4.0,8000,In Stock,https://ajio.com
+Nike Revolution 6,Nike,Fashion,Shoes,https://m.media-amazon.com/images/I/61NlB0K+ZOL.jpg,Comfortable running shoes,Meesho,3695,1500,0,2195,3.8,12000,In Stock,https://meesho.com
