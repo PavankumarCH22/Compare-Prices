@@ -12,5 +12,9 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  build: {
+    outDir: '../../price-compare-hub/frontend/dist',
+    chunkSizeWarningLimit: 1000
   }
 })
