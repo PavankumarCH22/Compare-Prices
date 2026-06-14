@@ -1,0 +1,12 @@
+{
+  "name": "price-compare-hub-root",
+  "version": "1.0.0",
+  "description": "Root package for PriceCompare Hub combined deployment",
+  "scripts": {
+    "install-backend": "cd price-compare-hub/backend && npm install",
+    "install-frontend": "cd price-compare-hub/frontend && npm install",
+    "build-frontend": "cd price-compare-hub/frontend && npm run build",
+    "build": "npm run install-backend && npm run install-frontend && npm run build-frontend",
+    "start": "cd price-compare-hub/backend && node index.js"
+  }
+}
